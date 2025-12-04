@@ -1,145 +1,68 @@
 
+public class Player extends GameObject {
 
-import java.util.ArrayList;
+	private String imeIgraca;
+	private int health;
 
-public class Main {
+	public Player(int x, int y, Collidable collider, String imeIgraca, int health) {
+		super(x, y, collider);
+		this.imeIgraca = imeIgraca;
+		this.health = health;
+	}
 
-	static class Player {
-		private String name;
-		private int x;
-		private int y;
-		private int width;
-		private int height;
-		private int health;
-		private int score;
+	public String getImeIgraca() {
+		return imeIgraca;
+	}
 
-		public Player(String name, int x, int y, int width, int height, int health) {
-			this.name = name.toUpperCase();
-			this.x = x;
-			this.y = y;
-			this.width = width;
-			this.height = height;
-			this.health = health;
-			this.score = 0;
+	public void setImeIgraca(String imeIgraca) {
+		if (imeIgraca == null) {
+			throw new IllegalArgumentException("Ime ne može biti null");
 		}
+		this.imeIgraca = imeIgraca;
+		{
+			imeIgraca = imeIgraca.trim().replaceAll("\\s+", " "); // micemo sve sto nam je na pocetku a sta je visak
+			String[] ime = imeIgraca.split(" "); // splitujemo kako bi makpli raymake
+			StringBuilder sb = new StringBuilder();
 
-		public String getName() {
-			return name;
-		}
+			for (String i : ime) {
+				if (!i.isEmpty()) {
+					sb.append(Character.toUpperCase(i.charAt(0)));
+					sb.append(i.substring(1).toLowerCase());
+					sb.append(" ");
 
-		public int getX() {
-			return x;
-		}
+					// AKO POCINJE MALIM SLOVOM NAPISI U VELIKO
+					// NAKON TOGA UZMI SVA SLOVA OSIM PRVOG I PRETVORI U MALA
+					// DODAJ RAZMAKE IZMEDJU I TO SVE SPAJA
+				}
+				imeIgraca = sb.toString().trim();
+			}
 
-		public int getY() {
-			return y;
-		}
+			if (imeIgraca.isEmpty()) {
+				throw new IllegalArgumentException("Ime mora iti uneseno");
+			}
 
-		public int getWidth() {
-			return width;
-		}
-
-		public int getHeight() {
-			return height;
-		}
-
-		public int getHealth() {
-			return health;
-		}
-
-		public int getScore() {
-			return score;
-		}
-
-		public void setHealth(int health) {
-			this.health = health;
-		}
-
-		public void setScore(int score) {
-			this.score = score;
-		}
-
-		public void move(int dx, int dy) {
-			this.x += dx;
-			this.y += dy;
-		}
-
-		public String toString() {
-			return String.format("Player{name='%s', x=%d, y=%d, HP=%d, Score=%d}", name, x, y, health, score);
+			this.imeIgraca = imeIgraca;
 		}
 	}
 
-	static class Enemy {
-		private String type;
-		private int x;
-		private int y;
-		private int width;
-		private int height;
-		private int damage;
-
-		public Enemy(String type, int x, int y, int width, int height, int damage) {
-			this.type = type;
-			this.x = x;
-			this.y = y;
-			this.width = width;
-			this.height = height;
-			this.damage = damage;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		public int getX() {
-			return x;
-		}
-
-		public int getY() {
-			return y;
-		}
-
-		public int getWidth() {
-			return width;
-		}
-
-		public int getHeight() {
-			return height;
-		}
-
-		public int getDamage() {
-			return damage;
-		}
-
-		public String toString() {
-			return String.format("Enemy{type='%s', x=%d, y=%d, DMG=%d}", type, x, y, damage);
-		}
+	public int getHealth() {
+		return health;
 	}
 
-	static class Game {
-        private Player player;
-        private ArrayList<Enemy> enemies;
-        private ArrayList<String> eventLog;
+	public void setHealth(int health) {
+		if (health < 0 || health > 100) {
+			throw new IllegalArgumentException("Health mora biti između 0 i 100");
+		}
+		this.health = health;
+	}
 
-        public Game(Player player) {
-            this.player = player;
-            this.enemies = new ArrayList<>();
-            this.eventLog = new ArrayList<>();
-        }
+	@Override
+	public String getDisplayName() {
+		return imeIgraca;
+	}
 
-        public void addEnemy(Enemy e) {
-            enemies.add(e);
-            eventLog.add("Dodat neprijatelj tipa: " + e.getType());
-        }
-
-        public boolean checkCollision(Player p, Enemy e) {
-            return p.getX() < e.getX() + e.getWidth() &&
-                   p.getX() + p.getWidth() > e.getX() &&
-                   p.getY() < e.getY() + e.getHeight() &&
-                   p.getY() + p.getHeight() > e.getY();
-  }
-    
-
-
-        public void decreaseHealth(Player p, Enemy e) {
-        }
-        }
+	@Override
+	public String toString() {
+		return "Player [" + imeIgraca + "] @ (" + getX() + "," + getY() + ") " + getCollider() + " HP=" + health;
+	}
+}
